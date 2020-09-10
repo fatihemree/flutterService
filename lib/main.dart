@@ -5,36 +5,28 @@ import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'model/model.dart';
 
-var logger = Logger();
-List<Country> memleket = [];
-
-Future<String> loadData() async {
-  return await rootBundle.loadString(("lib/data/data.json"));
-}
-
-Future loadDataParse() async {
-  String stringData = await loadData();
-  final jsonResponse = json.decode(stringData);
-  Country sehirler = Country.fromJson(jsonResponse);
-  logger.d(sehirler.ilce);
-  
-}
-
-main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  loadDataParse();
-  runApp(MyApp());
-}
+main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
-  final Country sehirler;
-
-  const MyApp({this.sehirler});
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadDataParse.then((value) {
+      for (var item in value) {
+        print(item.toJson() );
+        
+      }
+    });
+    // print(sehirler[0].ilce);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -45,10 +37,20 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
           child: Container(
-            child: Text("hello"),
+            child: Text("fffff"),
           ),
         ),
       ),
     );
+  }
+
+  Future<String> get loadData async {
+    return await rootBundle.loadString(("lib/data/data.json"));
+  }
+
+  Future<List<Country>> get loadDataParse async {
+    String stringData = await loadData;
+    List jsonResponse = jsonDecode(stringData);
+    return jsonResponse.map((e) => Country.fromJson(e)).toList();
   }
 }
